@@ -1,17 +1,27 @@
 import { useState } from 'react'
 
-const Button = (props) => <button onClick={props.onClick}>New Anecdote</button>
+interface AnecdoteProps {
+  text: string;
+  anecdote: string;
+  votes: number;
+}
+
+interface ButtonProps {
+  text: string;
+  onClick: () => void;
+}
+
+const Anecdote = ({text, anecdote, votes}: AnecdoteProps) => (
+  <div>
+    <h2>{text}</h2>
+    <p>{anecdote}</p>
+    <p>Upvotes: {votes}</p>
+  </div>
+)
+
+const Button = ({onClick, text}: ButtonProps) => <button onClick={onClick}>{text}</button>
 
 const App = () => {
-  const [selected, setSelected] = useState(0)
-
-  const handleCLick = () => {
-    console.log("The selected value is:", selected)
-    selected === (anecdotes.length - 1) ?
-    setSelected(0) :
-    setSelected(selected + 1)
-  }
-
   const anecdotes = [
     'If it hurts, do it more often.',
     'Adding manpower to a late software project makes it later!',
@@ -23,12 +33,39 @@ const App = () => {
     'The only way to go fast, is to go well.'
   ]
 
+  const [selected, setSelected] = useState(0)
+  const [votes, setVotes] = useState(Array(anecdotes.length).fill(0))
+  const [mostVotesIndex, setMostVotesIndex] = useState(0)
+
+  const handleNextAnecdote = () => {
+    console.log("The selected value is:", selected, ". But about to change")
+    setSelected((selected + 1) % anecdotes.length)
+  }
+
+  const handleUpVote = () => {
+    console.log("Upvoted")
+
+    const newVotes = votes.map((el, i) => {
+      if (i === selected) {
+        return el + 1; // increment vote
+      } else {
+        return el;     // leave votes unchanged
+      }
+    })
+    setVotes(newVotes)
+
+    const most = newVotes.indexOf(Math.max(...newVotes));
+    setMostVotesIndex(most)
+  }
+
   return (
     <div>
-      {anecdotes[selected]}
+      <Anecdote text="Anecdote of The Day" anecdote={anecdotes[selected]} votes={votes[selected]} />
       <div>
-        <Button onClick={handleCLick}></Button>
+        <Button onClick={handleNextAnecdote} text="Next Anecdote"></Button>
+        <Button onClick={handleUpVote} text="Upvote"></Button>
       </div>
+      <Anecdote text="Anecdote With Most Votes" anecdote={anecdotes[mostVotesIndex]} votes={votes[mostVotesIndex]} />
     </div>
   )
 }
