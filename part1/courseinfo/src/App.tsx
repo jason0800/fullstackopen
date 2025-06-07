@@ -1,13 +1,22 @@
 const Part = ({part}) => {
-  console.log(part);
   return <p>{part.name} {part.exercises}</p>
 }
 
+const Total = ({parts}) => {
+  const total = parts.reduce(
+    (acc, curr) => {
+      return acc + curr.exercises
+    }
+  , 0)
+
+  return <p>Total Number of Exercises: {total}</p>
+}
+
 const Content = ({parts}) => {
-  // console.log(parts);
   return (
     <div>
       {parts.map(part => <Part key={part.id} part={part}/>)}
+      <Total parts={parts}/>
     </div>
   )
 }
@@ -17,7 +26,6 @@ const Header = ({name}) => (
 )
 
 const Course = ({course}) => {
-  // console.log(course);
   return (
     <div>
       <Header name={course.name} />
@@ -48,7 +56,7 @@ const App = () => {
       },
       {
         name: 'JavaScript Basics',
-        exercises: 20,
+        exercises: 10,
         id: 4
       }
     ]
