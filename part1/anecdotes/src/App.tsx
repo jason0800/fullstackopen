@@ -17,6 +17,7 @@ const Anecdote = ({text, anecdote, votes}: AnecdoteProps) => (
     <p>{anecdote}</p>
     <p>Upvotes: {votes}</p>
   </div>
+
 )
 
 const Button = ({onClick, text}: ButtonProps) => <button onClick={onClick}>{text}</button>
