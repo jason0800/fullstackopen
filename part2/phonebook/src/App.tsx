@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 
 import Header from './components/Header.tsx'
 import PersonForm from './components/PersonForm.tsx'
@@ -6,16 +7,23 @@ import Filter from './components/Filter.tsx'
 import Persons from './components/Persons.tsx'
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto', number: '027123123' },
-    { name: 'Bob', number: '123' },
-    { name: 'Jason', number: '456' }
-  ])
+  const [persons, setPersons] = useState([])
 
   // inputs
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [search, setSearch] = useState('')
+
+  useEffect(() => {
+    console.log("effect");
+    axios
+      .get("http://localhost:3001/persons")
+      .then(response => {
+        console.log('promise fulfilled')
+        setPersons(response.data)
+      })
+  }, [])
+  console.log("Persons:", persons);
 
   const addPerson = (event) => {
     event.preventDefault()
