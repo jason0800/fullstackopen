@@ -32,9 +32,21 @@ const App = () => {
     }
 
     if (persons.some(person => person.name === newName)) {
-      alert(`${newName} already exists in phonebook.`);
-      setNewName('')
-      setNewNumber('')
+      if (window.confirm(`${newName} is already a saved contact. Replace old number with new one?`)) {
+        const foundPerson = persons.find(person => person.name === newName)
+
+        personService
+          .update(foundPerson.id, personObject)
+          .then(updatedPerson => {
+            console.log(updatedPerson);
+            setPersons(persons.map(person =>
+              person.id !== updatedPerson.id ? person : updatedPerson
+            ))
+          })
+      } else {
+        setNewName('')
+        setNewNumber('')
+      }
     } else if (persons.some(person => person.number === newNumber)) {
       alert(`${newNumber} already exists in phonebook.`)
       setNewName('')
@@ -51,10 +63,14 @@ const App = () => {
   }
 
   const handleDeletePerson = (id) => {
-    console.log("person to be deleted")
-    personService.remove(id)
-    setPersons(persons.filter(person => person.id != id))
+    if (window.confirm("You sure you want to delete?")) {
+      personService.remove(id)
+      setPersons(persons.filter(person => person.id != id))
+    } else {
+      console.log("Cancelled");
+    }
   }
+
 
   const filteredPersons = persons.filter(person =>
     person.name.toLowerCase().includes(search.toLowerCase()) && search !== ''
@@ -65,7 +81,6 @@ const App = () => {
   }
 
   const handleNameChange =(event) => {
-    console.log(event.target.value);
     setNewName(event.target.value)
   }
 
@@ -93,7 +108,7 @@ const App = () => {
         <Person
           key={person.id}
           person={person}
-          deletePerson={()=>handleDeletePerson(person.id)}
+          onClick={()=>handleDeletePerson(person.id)}
         />
       ))}
     </div>

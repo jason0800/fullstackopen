@@ -1,10 +1,10 @@
-const Person = ({person, deletePerson}) => {
-  console.log(deletePerson);
+const Person = ({person, onClick}) => {
+  // console.log(onClick);
 
   return (
     <div>
       <span>{person.name}: {person.number}</span>
-      <button onClick={deletePerson}>Delete</button>
+      <button onClick={onClick}>Delete</button>
     </div>
   )
 }
