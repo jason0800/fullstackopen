@@ -2,6 +2,7 @@ import {useState, useEffect} from 'react'
 import Note from "./components/Note"
 import noteService from "./services/notes"
 import Notification from './components/Notification'
+import Footer from './components/Footer'
 
 const App = () => {
   const [notes, setNotes] = useState([])
@@ -80,6 +81,7 @@ const App = () => {
       <button onClick={() => setShowAll(!showAll)}>
         Show {showAll ? "important" : "all"}
       </button>
+      <Footer />
     </div>
   )
 }
