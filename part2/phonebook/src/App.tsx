@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import personService from './services/phonebook.tsx'
 
 import Header from './components/Header.tsx'
 import PersonForm from './components/PersonForm.tsx'
 import Filter from './components/Filter.tsx'
-import Persons from './components/Persons.tsx'
+import Person from './components/Person.tsx'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -16,18 +16,16 @@ const App = () => {
 
   useEffect(() => {
     console.log("effect");
-    axios
-      .get("http://localhost:3001/persons")
-      .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
+    personService
+      .getAll()
+      .then(returnedPersons => {
+        setPersons(returnedPersons)
       })
   }, [])
   console.log("Persons:", persons);
 
   const addPerson = (event) => {
     event.preventDefault()
-
     const personObject = {
       name: newName,
       number: newNumber
@@ -42,14 +40,24 @@ const App = () => {
       setNewName('')
       setNewNumber('')
     } else {
-      setPersons(persons.concat(personObject))
-      setNewName('')
-      setNewNumber('')
+      personService
+        .create(personObject)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
+          setNewName('')
+          setNewNumber('')
+        })
     }
   }
 
+  const handleDeletePerson = (id) => {
+    console.log("person to be deleted")
+    personService.remove(id)
+    setPersons(persons.filter(person => person.id != id))
+  }
+
   const filteredPersons = persons.filter(person =>
-      person.name.toLowerCase().includes(search.toLowerCase()) && search !== ''
+    person.name.toLowerCase().includes(search.toLowerCase()) && search !== ''
   )
 
   const handleSearchChange = (event) => {
@@ -65,6 +73,8 @@ const App = () => {
     setNewNumber(event.target.value)
   }
 
+  const personsToShow = search === '' ? persons : filteredPersons
+
   return (
     <div>
       <Header text="Phonebook" />
@@ -79,11 +89,13 @@ const App = () => {
         onNumberChange={handleNumberChange}
         />
       <Header text="Contacts" />
-      <Persons
-        search={search}
-        persons={persons}
-        filteredPersons={filteredPersons}
+      {personsToShow.map(person => (
+        <Person
+          key={person.id}
+          person={person}
+          deletePerson={()=>handleDeletePerson(person.id)}
         />
+      ))}
     </div>
   )
 }

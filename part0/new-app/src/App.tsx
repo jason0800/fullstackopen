@@ -5,7 +5,7 @@ const App = () => {
 
   return (
     <div>
-    <button onClick={handleClick(2)}>Click Me</button>
+    <button onClick={()=>handleClick(2)}>Click Me</button>
     </div>
   );
 };
