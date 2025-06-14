@@ -5,9 +5,11 @@ import Header from './components/Header.tsx'
 import PersonForm from './components/PersonForm.tsx'
 import Filter from './components/Filter.tsx'
 import Person from './components/Person.tsx'
+import Notification from './components/Notification.tsx'
 
 const App = () => {
   const [persons, setPersons] = useState([])
+  const [notification, setNotification] = useState(null)
 
   // inputs
   const [newName, setNewName] = useState('')
@@ -43,6 +45,9 @@ const App = () => {
               person.id !== updatedPerson.id ? person : updatedPerson
             ))
           })
+          .catch(error => {
+            console.log(error);
+          })
       } else {
         setNewName('')
         setNewNumber('')
@@ -56,6 +61,8 @@ const App = () => {
         .create(personObject)
         .then(returnedPerson => {
           setPersons(persons.concat(returnedPerson))
+          setNotification(`${returnedPerson.name} successfully added to Phonebook.`)
+          setTimeout(() => setNotification(null), 4000)
           setNewName('')
           setNewNumber('')
         })
@@ -92,6 +99,7 @@ const App = () => {
 
   return (
     <div>
+      <Notification message={notification} />
       <Header text="Phonebook" />
       <Header text="Find Contact" />
       <Filter value={search} onChange={handleSearchChange} />
