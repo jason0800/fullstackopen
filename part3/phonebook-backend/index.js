@@ -27,11 +27,32 @@ let persons = [
 app.use(express.json())
 
 app.get('/', (request, response) => {
-  response.send('<h1>Hello World!</h1>')
+  response.send('<h1>Phonebook</h1>')
+})
+
+app.get('/info', (request, response) => {
+  const numberOfContacts = persons.length
+  const timeReceived = new Date().toUTCString()
+
+  response.send(
+    `<h2>Phonebook has ${numberOfContacts} contacts.</h2>
+     <p>${timeReceived}</p>`
+  )
 })
 
 app.get('/api/persons', (request, response) => {
   response.json(persons)
+})
+
+app.get('/api/persons/:id', (request, response) => {
+  const id = request.params.id
+  const person = persons.find(person => person.id === id)
+
+  if (person) {
+    response.json(person)
+  } else {
+    response.status(404).end()
+  }
 })
 
 const PORT = 3001
